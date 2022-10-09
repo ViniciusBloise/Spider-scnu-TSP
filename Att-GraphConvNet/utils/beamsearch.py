@@ -129,7 +129,8 @@ class Beamsearch(object):
         assert self.num_nodes == len(self.prev_Ks) + 1
 
         hyp = -1 * torch.ones(self.batch_size, self.num_nodes).type(self.dtypeLong)
+        k_int = k.to(int)
         for j in range(len(self.prev_Ks) - 1, -2, -1):
-            hyp[:, j + 1] = self.next_nodes[j + 1].gather(1, k).view(1, self.batch_size)
-            k = self.prev_Ks[j].gather(1, k)
+            hyp[:, j + 1] = self.next_nodes[j + 1].gather(1, k_int).view(1, self.batch_size)
+            k = self.prev_Ks[j].gather(1, k_int)
         return hyp
