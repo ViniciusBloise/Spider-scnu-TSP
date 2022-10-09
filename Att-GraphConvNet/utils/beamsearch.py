@@ -89,7 +89,7 @@ class Beamsearch(object):
         prev_k = bestScoresId / self.num_nodes
         self.prev_Ks.append(prev_k)
         # Update outputs
-        new_nodes = bestScoresId - prev_k * self.num_nodes
+        new_nodes = bestScoresId - (prev_k * self.num_nodes).to(int)
         self.next_nodes.append(new_nodes)
         # Re-index mask
         perm_mask = prev_k.unsqueeze(2).expand_as(self.mask)  # (batch_size, beam_size, num_nodes)
