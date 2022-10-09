@@ -93,7 +93,7 @@ class Beamsearch(object):
         self.next_nodes.append(new_nodes)
         # Re-index mask
         perm_mask = prev_k.unsqueeze(2).expand_as(self.mask)  # (batch_size, beam_size, num_nodes)
-        self.mask = self.mask.gather(1, perm_mask)
+        self.mask = self.mask.gather(1, perm_mask.to(int))
         # Mask newly added nodes
         self.update_mask(new_nodes)
 
