@@ -166,7 +166,7 @@ def beamsearch_tour_nodes(y_pred_edges, beam_size, batch_size, num_nodes, dtypeF
         # Compute softmax over edge prediction matrix
         y = F.softmax(y_pred_edges, dim=3)  # B x V x V x voc_edges
         # Consider the second dimension only
-        y = y[:, :, :, 1]  # B x V x V
+        y = y[:, :, :, 1]  # B x V x V #bt_sz, N, N
     elif probs_type == 'logits':
         # Compute logits over edge prediction matrix
         y = F.log_softmax(y_pred_edges, dim=3)  # B x V x V x voc_edges

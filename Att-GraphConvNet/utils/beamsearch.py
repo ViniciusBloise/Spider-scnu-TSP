@@ -32,26 +32,26 @@ class Beamsearch(object):
         self.dtypeFloat = dtypeFloat
         self.dtypeLong = dtypeLong
         # Set beamsearch starting nodes
-        self.start_nodes = torch.zeros(batch_size, beam_size).type(self.dtypeLong)
+        self.start_nodes = torch.zeros(batch_size, beam_size).type(self.dtypeLong) #bt_sz, bm_sz
         if random_start == True:
             # Random starting nodes
             self.start_nodes = torch.randint(0, num_nodes, (batch_size, beam_size)).type(self.dtypeLong)
         # Mask for constructing valid hypothesis
-        self.mask = torch.ones(batch_size, beam_size, num_nodes).type(self.dtypeFloat)
+        self.mask = torch.ones(batch_size, beam_size, num_nodes).type(self.dtypeFloat) #bt_sz, bm_sz, N
         self.update_mask(self.start_nodes)  # Mask the starting node of the beam search
         # Score for each translation on the beam
-        self.scores = torch.zeros(batch_size, beam_size).type(self.dtypeFloat)
+        self.scores = torch.zeros(batch_size, beam_size).type(self.dtypeFloat) #bt_sz, bm_sz
         self.all_scores = []
         # Backpointers at each time-step
         self.prev_Ks = []
         # Outputs at each time-step
-        self.next_nodes = [self.start_nodes]
+        self.next_nodes = [self.start_nodes] #bt_sz, bm_sz
 
-    def get_current_state(self):
+    def get_current_state(self): #should return indices of the form bt_sz, bm_sz, N
         """Get the output of the beam at the current timestep.
         """
         current_state = (self.next_nodes[-1].unsqueeze(2)
-                         .expand(self.batch_size, self.beam_size, self.num_nodes))
+                         .expand(self.batch_size, self.beam_size, self.num_nodes)) #bt_sz, bm_sz, N
         return current_state
 
     def get_current_origin(self):
@@ -79,17 +79,17 @@ class Beamsearch(object):
             elif self.probs_type == 'logits':
                 beam_lk[:, 1:] = -1e20 * torch.ones(beam_lk[:, 1:].size()).type(self.dtypeFloat)
         # Multiply by mask
-        beam_lk = beam_lk * self.mask
+        beam_lk = beam_lk * self.mask #bt_sz, bm_sz, N
         beam_lk = beam_lk.view(self.batch_size, -1)  # (batch_size, beam_size * num_nodes)
         # Get top k scores and indexes (k = beam_size)
-        bestScores, bestScoresId = beam_lk.topk(self.beam_size, 1, True, True)
+        bestScores, bestScoresId = beam_lk.topk(self.beam_size, 1, True, True) #bt_sz, bm_sz
         # Update scores
         self.scores = bestScores
         # Update backpointers
-        prev_k = bestScoresId / self.num_nodes
+        prev_k = bestScoresId #/ self.num_nodes
         self.prev_Ks.append(prev_k)
         # Update outputs
-        new_nodes = bestScoresId - (prev_k * self.num_nodes).to(int)
+        new_nodes = bestScoresId # - (prev_k * self.num_nodes).to(int)
         self.next_nodes.append(new_nodes)
         # Re-index mask
         perm_mask = prev_k.unsqueeze(2).expand_as(self.mask)  # (batch_size, beam_size, num_nodes)
@@ -129,8 +129,7 @@ class Beamsearch(object):
         assert self.num_nodes == len(self.prev_Ks) + 1
 
         hyp = -1 * torch.ones(self.batch_size, self.num_nodes).type(self.dtypeLong)
-        k_int = k.to(int)
         for j in range(len(self.prev_Ks) - 1, -2, -1):
-            hyp[:, j + 1] = self.next_nodes[j + 1].gather(1, k_int).view(1, self.batch_size)
-            k = self.prev_Ks[j].gather(1, k_int)
+            hyp[:, j + 1] = self.next_nodes[j + 1].gather(1, k).view(1, self.batch_size)
+            k = self.prev_Ks[j].gather(1, k).to(int)
         return hyp
