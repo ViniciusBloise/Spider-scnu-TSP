@@ -121,4 +121,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+.DS_Store
+
+*.icloud
+*.DEEPLEARN*
+*.gz
+Att-GraphConvNet/logs/tsp-data/
 Att-GraphConvNet/logs/tsp20/spider-1349029.out
+Att-GraphConvNet/.DS_Store
