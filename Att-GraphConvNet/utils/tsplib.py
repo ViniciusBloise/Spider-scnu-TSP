@@ -50,10 +50,10 @@ def write_tsplib_prob(tsp_instance_name, edge_prob, num_node, mean, fnn = 0, gre
     '''
     with open('{}'.format(tsp_instance_name), 'w') as f:
         f.write('the mean of prob-rank is {}\n'.format(mean))
-        f.write('the number of false negetive edges is {}\n'.format(fnn))
+        f.write('the number of false negative edges is {}\n'.format(fnn))
         f.write('the number of probability greater than 0 is {}/edge\n'.format(greater_zero))
         f.write('TYPE: Probability\n')
-        f.write('DIMENSIOn: {}\n'.format(num_node))
+        f.write('DIMENSION: {}\n'.format(num_node))
         for i in range(num_node):
             for j in range(num_node):
                 #f.write(' {}'.format(edge_prob[i, j]))
