@@ -131,3 +131,6 @@ dmypy.json
 Att-GraphConvNet/logs/tsp-data/
 Att-GraphConvNet/logs/tsp20/spider-1349029.out
 Att-GraphConvNet/.DS_Store
+*.npy
+*.tsp
+*.tar
