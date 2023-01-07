@@ -101,6 +101,15 @@ class PlotterTSP:
         plt.scatter(pos[:, 0], pos[:, 1], 5, color='darkblue', marker='o')
         # self.fig = fig
         # self.ax = ax
+        if heatmap is not None:
+            ...
+    
+    def draw_edges(self, g, topk_matrix, heatmap):
+        for i, row in topk_matrix:
+            for j, item in row:
+                if heatmap[i,j] > 0:
+                    print((i,item))
+
 
     def show(self, block=False):
         plt.show(block=block)
