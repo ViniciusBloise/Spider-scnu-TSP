@@ -86,3 +86,35 @@ class GraphBuilder:
         options['edge_color']='red'
         nx.draw(G_min2, pos, **options)
         return edges
+
+    @staticmethod
+    def add_optimal_edges(g, opt_tour):
+        prev = None
+        first = None
+        edges = []
+        for node in opt_tour:
+            if prev is None:
+                first = prev = node
+                continue
+            edge_tpl = (prev, node)
+            g.add_edge(*edge_tpl)
+            edges.append(edge_tpl)
+            prev = node
+        g.add_edge(first, prev)
+        edges.append((first, prev))
+        return edges
+
+    @staticmethod
+    def draw_edges(g, pos, topk_matrix, heatmap):
+        for i, row in enumerate(topk_matrix):
+            for j, item in enumerate(row):
+                if heatmap[i,j] > 0:
+                    edge = (i,item); weight = heatmap[i,j]
+                    #print(edge, weight)
+                    g.add_edge(i,item, weight = weight/3)
+        
+        options = {'node_size':8}
+        options['edge_color']='lightblue'
+        for edge in g.edges(data='weight'):
+            nx.draw_networkx_edges(g, pos, edgelist=[edge], width=edge[2], edge_color='gray')
+        #nx.draw(g, pos, **options)
