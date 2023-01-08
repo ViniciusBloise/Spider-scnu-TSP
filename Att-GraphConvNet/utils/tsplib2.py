@@ -88,8 +88,17 @@ class ReaderTSP:
     def load_optimal_solution(filename):
         return np.load(filename)
 
+    @staticmethod
+    def get_lat_long(z):
+        lati = ReaderTSP.to_radiant(z[0])
+        long = ReaderTSP.to_radiant(z[1])
+        return lati, long
 
-
+    @staticmethod
+    def to_radiant(angle):
+        _deg = float(angle)
+        _min = angle - _deg
+        return np.pi * (_deg + 5.0 * _min / 3.0) / 180.0
 
 class PlotterTSP:
 
@@ -101,8 +110,6 @@ class PlotterTSP:
         plt.scatter(pos[:, 0], pos[:, 1], 5, color='darkblue', marker='o')
         # self.fig = fig
         # self.ax = ax
-        if heatmap is not None:
-            ...
     
     def draw_edges(self, g, topk_matrix, heatmap):
         for i, row in topk_matrix:
